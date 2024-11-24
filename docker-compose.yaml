@@ -1,0 +1,26 @@
+name: postgres-python
+services:
+    db:
+      image: postgres:13
+      container_name: postgres-container
+      environment:
+        POSTGRES_USER: bat
+        POSTGRES_PASSWORD: mypassword
+        POSTGRES_DB: baturin
+      volumes:
+        - /home/ss/PycharmProjects/pythonProject/init.sql:/docker-entrypoint-initdb.d/init.sql
+      ports:
+        - "5432:5432"
+      #networks:
+      # - ps_pyt_net
+      restart: unless-stopped
+
+    python:
+      build:
+       # context: ./app
+        dockerfile: Dockerfile
+      container_name:  python-container
+      #networks:
+      #  - ps_pyt_net
+      depends_on:
+        - db
