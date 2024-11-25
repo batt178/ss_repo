@@ -8,19 +8,19 @@ services:
         POSTGRES_PASSWORD: mypassword
         POSTGRES_DB: baturin
       volumes:
-        - /home/ss/PycharmProjects/pythonProject/init.sql:/docker-entrypoint-initdb.d/init.sql
+        - ./init.sql:/docker-entrypoint-initdb.d/init.sql
       ports:
         - "5432:5432"
-      #networks:
-      # - ps_pyt_net
       restart: unless-stopped
-
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U postgres"]
+        interval: 5s
+        timeout: 10s
+        retries: 3
     python:
       build:
-       # context: ./app
         dockerfile: Dockerfile
       container_name:  python-container
-      #networks:
-      #  - ps_pyt_net
       depends_on:
-        - db
+        db:
+          condition: service_healthy
